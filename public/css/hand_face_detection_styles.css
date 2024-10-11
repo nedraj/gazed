@@ -118,3 +118,40 @@ th {
 tr:nth-child(even) {
     background-color: var(--row-background-color);
 }
+
+#keyContainer {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.key:focus {
+    outline: none;
+    background-color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#selectedKey {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.key-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+  
+.key {
+    margin: 2px;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #999696;
+    border-radius: 4px;
+    text-align: center;
+    width: 60px;
+    height: 45px;
+    line-height: 30px;
+    cursor: pointer;
+}

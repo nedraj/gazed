@@ -34,7 +34,7 @@
   const canvasElement = document.getElementById("output_canvas");
   const canvasCtx = canvasElement.getContext("2d");
   const enableWebcamButton = document.getElementById("webcamButton");
-  const gestureButton = document.getElementById("gestureButton");
+  // const gestureButton = document.getElementById("gestureButton");
   const gestureOutput = document.getElementById("gesture_output");
   const confidenceOutput = document.getElementById("confidence_output");
   const handednessOutput = document.getElementById("handedness_output");
@@ -42,11 +42,12 @@
   const handCountOutput = document.getElementById("hand_count_output");
 
   // Add these constants near the top of the file
-  const EYE_AR_THRESH = 0.2;
+  const EYE_AR_THRESH = 3
   const EYE_AR_CONSEC_FRAMES = 3;
   const BLINK_SEQUENCE_FRAMES = 15;
-  const GAZE_THRESHOLD = 0.1;
+  const GAZE_THRESHOLD = 3;
   const GAZE_DURATION = 2000; // 2 seconds in milliseconds
+  const DOUBLE_BLINK_INTERVAL = 1000; // 1 second in milliseconds
 
   // Add these variables for blink and gaze detection
   let blinkCounter = 0;
@@ -54,6 +55,10 @@
   let doubleBlink = false;
   let gazeStartTime = 0;
   let isGazing = false;
+
+  // Add these variables for key selection
+  let blinkCount = 0;
+  let selectedKey = null;
 
   async function createFaceLandmarker() {
     const filesetResolver = await FilesetResolver.forVisionTasks(
@@ -125,7 +130,7 @@
   createGestureRecognizer();
 
   enableWebcamButton.addEventListener("click", enableCam);
-  gestureButton.addEventListener("click", toggleHandGestureDetection);
+  // gestureButton.addEventListener("click", toggleHandGestureDetection);
 
   function enableCam() {
     if (!faceLandmarker || !gestureRecognizer) {
@@ -135,7 +140,7 @@
 
     webcamRunning = !webcamRunning;
     enableWebcamButton.innerText = webcamRunning ? "DISABLE FACE" : "DETECT FACE";
-    gestureButton.disabled = !webcamRunning;
+    // gestureButton.disabled = !webcamRunning;
 
     const constraints = {
       video: { width: 1280, height: 720 }
@@ -157,10 +162,10 @@
     }
   }
 
-  function toggleHandGestureDetection() {
-    handGestureRunning = !handGestureRunning;
-    gestureButton.innerText = handGestureRunning ? "DISABLE HANDS" : "DETECT HANDS";
-  }
+  // function toggleHandGestureDetection() {
+  //   handGestureRunning = !handGestureRunning;
+  //   gestureButton.innerText = handGestureRunning ? "DISABLE HANDS" : "DETECT HANDS";
+  // }
 
   function updateCanvasSize() {
     const videoRatio = video.videoHeight / video.videoWidth;
@@ -244,8 +249,16 @@
           } else {
             if (blinkCounter >= EYE_AR_CONSEC_FRAMES) {
               const currentTime = Date.now();
-              if (currentTime - lastBlinkTime < BLINK_SEQUENCE_FRAMES * (1000 / 30)) {
-                doubleBlink = true;
+              if (currentTime - lastBlinkTime < DOUBLE_BLINK_INTERVAL) {
+                blinkCount++;
+                if (blinkCount >= 2) { // Change to two blinks
+                  console.log(`Two blinks detected on key: ${selectedKey}`);
+                  document.getElementById('selectedKey').textContent = `Selected: ${selectedKey}`;
+                  blinkCount = 0;
+                  moveToNextKey(); // Move to the next key
+                }
+              } else {
+                blinkCount = 1;
               }
               lastBlinkTime = currentTime;
             }
@@ -262,14 +275,18 @@
           const averageGaze = (leftGaze + rightGaze) / 2;
 
           if (averageGaze < GAZE_THRESHOLD) {
-            if (!isGazing) {
+            if (gazeStartTime === 0) {
               gazeStartTime = Date.now();
-              isGazing = true;
             } else if (Date.now() - gazeStartTime > GAZE_DURATION) {
-              console.log("User has been gazing at the webcam for more than 2 seconds!");
+              const keys = document.querySelectorAll('.key');
+              const focusedKey = document.activeElement;
+              const currentIndex = Array.from(keys).indexOf(focusedKey);
+              const nextIndex = (currentIndex + 1) % keys.length;
+              keys[nextIndex].focus();
+              gazeStartTime = 0;
             }
           } else {
-            isGazing = false;
+            gazeStartTime = 0;
           }
 
           // Draw detection results
@@ -277,14 +294,8 @@
           canvasCtx.font = "20px Arial";
           canvasCtx.fillText(`EAR: ${ear.toFixed(2)}`, 10, 30);
           canvasCtx.fillText(`Blink: ${blinkCounter >= EYE_AR_CONSEC_FRAMES}`, 10, 60);
-          canvasCtx.fillText(`Double Blink: ${doubleBlink}`, 10, 90);
-          canvasCtx.fillText(`Gaze: ${averageGaze.toFixed(2)}`, 10, 120);
-          canvasCtx.fillText(`Gazing at webcam: ${isGazing}`, 10, 150);
-
-          if (doubleBlink) {
-            console.log("Double blink detected!");
-            doubleBlink = false; // Reset the double blink flag
-          }
+          canvasCtx.fillText(`Gaze: ${averageGaze.toFixed(2)}`, 10, 90);
+          canvasCtx.fillText(`Selected Key: ${selectedKey}`, 10, 120);
         }
       } else {
         faceOutput.innerText = "No face landmarks detected.";
@@ -362,3 +373,28 @@
   function dist(point1, point2) {
     return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
   }
+
+  // Function to move to the next key
+  function moveToNextKey() {
+    const keys = document.querySelectorAll('.key');
+    const focusedKey = document.activeElement;
+    const currentIndex = Array.from(keys).indexOf(focusedKey);
+    const nextIndex = (currentIndex + 1) % keys.length;
+    keys[nextIndex].focus();
+  }
+
+  // Update the initializeKeys function
+  function initializeKeys() {
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => {
+      key.addEventListener('focus', () => {
+        selectedKey = key.textContent;
+      });
+    });
+
+    // Set default focus on the key 'H'
+    document.getElementById('key-h').focus();
+  }
+
+  // Call this function after the DOM is loaded
+  document.addEventListener('DOMContentLoaded', initializeKeys);
