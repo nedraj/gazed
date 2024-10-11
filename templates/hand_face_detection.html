@@ -17,56 +17,61 @@
 <body>
   <h1>Real-Time Face Detection</h1>
   <div class="container">
-    <div id="liveView">
-      <video id="webcam" autoplay playsinline></video>
-      <canvas id="output_canvas"></canvas>
-      <div id="buttonContainer">
-        <button id="webcamButton" class="mdc-button mdc-button--raised" tabindex="0">
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">DETECT FACE</span>
-        </button>
-      </div>
-      <div id="face_output">Face landmarks not detected.</div>
-    </div>
+    <!-- Add this new text field above the virtual keyboard -->
+    <div id="selectedText"></div>
     
-    <!-- Add the big keys -->
-    <div id="keyContainer">
-      <div class="key-row">
-        <div class="key" id="key-q" tabindex="0">Q</div>
-        <div class="key" id="key-w" tabindex="0">W</div>
-        <div class="key" id="key-e" tabindex="0">E</div>
-        <div class="key" id="key-r" tabindex="0">R</div>
-        <div class="key" id="key-t" tabindex="0">T</div>
-        <div class="key" id="key-y" tabindex="0">Y</div>
-        <div class="key" id="key-u" tabindex="0">U</div>
-        <div class="key" id="key-i" tabindex="0">I</div>
-        <div class="key" id="key-o" tabindex="0">O</div>
-        <div class="key" id="key-p" tabindex="0">P</div>
+    <div class="container">
+      <div id="liveView">
+        <video id="webcam" autoplay playsinline></video>
+        <canvas id="output_canvas"></canvas>
+        <div id="buttonContainer">
+          <button id="webcamButton" class="mdc-button mdc-button--raised" tabindex="0">
+            <span class="mdc-button__ripple"></span>
+            <span class="mdc-button__label">DETECT FACE</span>
+          </button>
+        </div>
+        <div id="face_output">Face landmarks not detected.</div>
       </div>
-      <div class="key-row">
-        <div class="key" id="key-a" tabindex="0">A</div>
-        <div class="key" id="key-s" tabindex="0">S</div>
-        <div class="key" id="key-d" tabindex="0">D</div>
-        <div class="key" id="key-f" tabindex="0">F</div>
-        <div class="key" id="key-g" tabindex="0">G</div>
-        <div class="key" id="key-h" tabindex="0">H</div>
-        <div class="key" id="key-j" tabindex="0">J</div>
-        <div class="key" id="key-k" tabindex="0">K</div>
-        <div class="key" id="key-l" tabindex="0">L</div>
+      
+      <!-- Add the big keys -->
+      <div id="keyContainer">
+        <div class="key-row">
+          <div class="key" id="key-q" tabindex="0">Q</div>
+          <div class="key" id="key-w" tabindex="0">W</div>
+          <div class="key" id="key-e" tabindex="0">E</div>
+          <div class="key" id="key-r" tabindex="0">R</div>
+          <div class="key" id="key-t" tabindex="0">T</div>
+          <div class="key" id="key-y" tabindex="0">Y</div>
+          <div class="key" id="key-u" tabindex="0">U</div>
+          <div class="key" id="key-i" tabindex="0">I</div>
+          <div class="key" id="key-o" tabindex="0">O</div>
+          <div class="key" id="key-p" tabindex="0">P</div>
+        </div>
+        <div class="key-row">
+          <div class="key" id="key-a" tabindex="0">A</div>
+          <div class="key" id="key-s" tabindex="0">S</div>
+          <div class="key" id="key-d" tabindex="0">D</div>
+          <div class="key" id="key-f" tabindex="0">F</div>
+          <div class="key" id="key-g" tabindex="0">G</div>
+          <div class="key" id="key-h" tabindex="0">H</div>
+          <div class="key" id="key-j" tabindex="0">J</div>
+          <div class="key" id="key-k" tabindex="0">K</div>
+          <div class="key" id="key-l" tabindex="0">L</div>
+        </div>
+        <div class="key-row">
+          <div class="key" id="key-z" tabindex="0">Z</div>
+          <div class="key" id="key-x" tabindex="0">X</div>
+          <div class="key" id="key-c" tabindex="0">C</div>
+          <div class="key" id="key-v" tabindex="0">V</div>
+          <div class="key" id="key-b" tabindex="0">B</div>
+          <div class="key" id="key-n" tabindex="0">N</div>
+          <div class="key" id="key-m" tabindex="0">M</div>
+        </div>
       </div>
-      <div class="key-row">
-        <div class="key" id="key-z" tabindex="0">Z</div>
-        <div class="key" id="key-x" tabindex="0">X</div>
-        <div class="key" id="key-c" tabindex="0">C</div>
-        <div class="key" id="key-v" tabindex="0">V</div>
-        <div class="key" id="key-b" tabindex="0">B</div>
-        <div class="key" id="key-n" tabindex="0">N</div>
-        <div class="key" id="key-m" tabindex="0">M</div>
-      </div>
+      
+      <!-- Add a display area for the selected key -->
+      <div id="selectedKey"></div>
     </div>
-    
-    <!-- Add a display area for the selected key -->
-    <div id="selectedKey"></div>
   </div>
 
   <script src="../public/js/hand_face_detection.js" type="module" ></script>
