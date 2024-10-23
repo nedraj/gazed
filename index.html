@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye-Tracking Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        #webcamButton {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+        #voice-select {
+            font-size: 16px;
+            padding: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Eye-Tracking Interface</h1>
+        <select id="voice-select">
+            <option value="">Loading voices...</option>
+        </select>
+        <br>
+        <button id="webcamButton">ENABLE WEBCAM</button>
+    </div>
+    <script src="public/js/hand_face_detection.js"></script>
+    <script>
+        function createVoiceMenu() {
+            const voiceSelect = document.getElementById('voice-select');
+
+            window.speechSynthesis.onvoiceschanged = () => {
+                const voices = window.speechSynthesis.getVoices();
+                voiceSelect.innerHTML = ''; // Clear existing options
+                voices.forEach((voice, i) => {
+                    const option = document.createElement('option');
+                    option.value = voice.name;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
+                });
+            };
+
+            voiceSelect.addEventListener('change', (event) => {
+                // Handle voice selection change
+            });
+        }
+
+        createVoiceMenu();
+    </script>
+</body>
+</html>
